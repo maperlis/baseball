@@ -118,9 +118,28 @@ await page.waitForTimeout(200);
 await page.screenshot({ path: `${out}/5-fairness.png`, fullPage: true });
 
 // --- Grid view --------------------------------------------------------------
+// Collapse attendance first so the grid itself is what gets captured.
+await page.getByRole('button', { name: /Attendance/ }).click();
 await page.getByRole('button', { name: 'Grid', exact: true }).click();
 await page.waitForTimeout(250);
 await page.screenshot({ path: `${out}/6-grid.png` });
+
+// An OUT cell must be clearly darker than the row beside it, not a faint tint.
+const outVsRow = await page.evaluate(() => {
+  const px = (el) => getComputedStyle(el).backgroundColor;
+  const outCell = document.querySelector('.grid__td--cell.is-out');
+  const playCell = document.querySelector('.grid__td--cell:not(.is-out)');
+  const rel = (c) => {
+    const [r, g, b] = c.match(/\d+/g).map(Number).map((v) => v / 255);
+    const f = (x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4);
+    return 0.2126 * f(r) + 0.7152 * f(g) + 0.0722 * f(b);
+  };
+  const a = rel(px(outCell));
+  const b = rel(px(playCell.closest('tr')));
+  const [hi, lo] = [a, b].sort((x, y) => y - x);
+  return Math.round(((hi + 0.05) / (lo + 0.05)) * 100) / 100;
+});
+console.log(`grid OUT cell vs playing row: ${outVsRow}:1 (want >= 3)`);
 
 // --- Layout check -----------------------------------------------------------
 const overflow = await page.evaluate(() => {

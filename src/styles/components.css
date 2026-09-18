@@ -488,11 +488,20 @@
 
 /* Bench cells are shaded the same grey as the printed card. */
 .grid__td--cell.is-out {
-  background: var(--bench-soft);
+  background: var(--out-fill);
 }
 
 .grid__td--cell.is-out .grid__select {
-  color: var(--n-600);
+  color: var(--out-text);
+  font-weight: 700;
+}
+
+/* The closed <select> inherits the white OUT text, but the dropdown list is
+   drawn by the OS — without this, options render white on white on some
+   mobile browsers. */
+.grid__select option {
+  color: var(--text);
+  background: var(--surface);
 }
 
 .grid__select {
@@ -502,7 +511,9 @@
   background: transparent;
   text-align: center;
   text-align-last: center;
-  font-weight: 600;
+  /* Bold on both states, matching the printed card: with a dark OUT fill the
+     position letters need the same weight to stay findable. */
+  font-weight: 700;
   font-size: 13px;
   padding: 0 2px;
   appearance: none;

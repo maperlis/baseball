@@ -11,7 +11,12 @@ import { positionOf } from './fairness';
  */
 const HEADER_FILL: [number, number, number] = [63, 63, 63];
 const ZEBRA_FILL: [number, number, number] = [247, 247, 247];
-const OUT_FILL: [number, number, number] = [191, 191, 191];
+// The reference card shades OUT a light grey, which sits only 1.84:1 against
+// the row beside it — fine on paper under good light, hard to pick out on a
+// phone. This is 5.10:1 against both the white and zebra rows and takes white
+// text at the same ratio, so benched innings read as solid blocks.
+const OUT_FILL: [number, number, number] = [110, 110, 110];
+const OUT_TEXT: [number, number, number] = [255, 255, 255];
 const LINE: [number, number, number] = [208, 208, 208];
 const FOOTER_FILL: [number, number, number] = [242, 242, 242];
 
@@ -116,7 +121,13 @@ export function buildLineupPdf(teamName: string, game: Game, players: Player[]):
         const text = Array.isArray(data.cell.text) ? data.cell.text[0] : data.cell.text;
         if (text === OUT) {
           data.cell.styles.fillColor = OUT_FILL;
-          data.cell.styles.textColor = 40;
+          data.cell.styles.textColor = OUT_TEXT;
+          data.cell.styles.fontStyle = 'bold';
+        } else if (text) {
+          // On a big roster most cells are OUT, so a dark OUT block can swamp
+          // the card and make the positions the hard thing to find. Bolding the
+          // position letters keeps them holding their own against it.
+          data.cell.styles.fontStyle = 'bold';
         }
       }
     },

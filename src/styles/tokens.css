@@ -30,9 +30,15 @@
   --n-900: #2a2e2b;
 
   /* --- Semantic --------------------------------------------------------- */
-  /* Matches the OUT fill in the exported PDF, so screen and paper agree. */
+  /* The bench-inning count badge on a player chip. */
   --bench: #c6c6c6;
-  --bench-soft: #ececec;
+  /* An OUT cell in the lineup grid, matching the exported PDF so screen and
+     paper agree. Deliberately dark: at the old #ECECEC an OUT cell sat 1.18:1
+     against the row beside it and vanished on a phone in daylight. This is
+     5.10:1 against both the white and zebra rows, and carries white text at
+     the same ratio. */
+  --out-fill: #6e6e6e;
+  --out-text: #ffffff;
   --warn: #b45309; /* fairness alerts — amber, reads clearly against green */
   --warn-tint: #fdf4e7;
   --danger: #b3261e;
