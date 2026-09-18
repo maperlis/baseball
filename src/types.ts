@@ -39,8 +39,14 @@ export interface Game {
   /** ISO yyyy-mm-dd. */
   date: string;
   innings: number;
-  /** Player ids in batting order. Continuous — every rostered player bats. */
+  /** Player ids in batting order. Continuous — everyone at the game bats. */
   battingOrder: string[];
+  /**
+   * True once the coach has hand-sorted this game's batting order. Until then
+   * the order tracks the roster; afterwards the game owns its own order and
+   * roster changes leave it alone.
+   */
+  customOrder?: boolean;
   assignments: Assignments;
 }
 

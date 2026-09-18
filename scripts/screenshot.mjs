@@ -92,6 +92,26 @@ await page.screenshot({ path: `${out}/3b-attendance.png` });
 const attLabel = await page.locator('.att__count').innerText();
 console.log(`attendance label: ${attLabel} (expected "17 of 20")`);
 
+// --- Batting order ----------------------------------------------------------
+await page.getByRole('button', { name: /Attendance/ }).click(); // collapse
+await page.getByRole('button', { name: /Batting order/ }).click();
+await page.waitForTimeout(200);
+
+const orderBefore = await page.locator('.bat__name').allInnerTexts();
+// Move the 6th batter to leadoff with the arrows.
+for (let i = 5; i > 0; i--) {
+  await page.locator('.bat__row').nth(i).getByLabel(/Move .* up/).click();
+}
+const orderAfter = await page.locator('.bat__name').allInnerTexts();
+console.log(`batting order leadoff: "${orderBefore[0]}" -> "${orderAfter[0]}"`);
+console.log(
+  `order still complete: ${orderAfter.length === orderBefore.length && new Set(orderAfter).size === orderAfter.length}`,
+);
+const badge = await page.locator('.bat__badge').innerText();
+console.log(`batting order badge: ${badge} (expected "Custom")`);
+await page.screenshot({ path: `${out}/3c-batting-order.png` });
+await page.getByRole('button', { name: /Batting order/ }).click(); // collapse
+
 // --- Autofill ---------------------------------------------------------------
 page.once('dialog', (d) => d.accept());
 await page.getByRole('button', { name: 'Auto-fill game' }).click();
@@ -118,8 +138,7 @@ await page.waitForTimeout(200);
 await page.screenshot({ path: `${out}/5-fairness.png`, fullPage: true });
 
 // --- Grid view --------------------------------------------------------------
-// Collapse attendance first so the grid itself is what gets captured.
-await page.getByRole('button', { name: /Attendance/ }).click();
+// Attendance and batting order are already collapsed above.
 await page.getByRole('button', { name: 'Grid', exact: true }).click();
 await page.waitForTimeout(250);
 await page.screenshot({ path: `${out}/6-grid.png` });

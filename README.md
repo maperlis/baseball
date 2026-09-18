@@ -9,11 +9,13 @@ sit every inning, so the app tracks bench time and flags unfair patterns.
 
 ## What it does
 
-- **Roster** — up to 20 players (name + uniform number). Roster order is the
+- **Roster** — up to 20 players (name + uniform number). Sets the default
   batting order.
 - **Attendance per game** — tick off who actually showed up. Absent players
   drop out of the batting order, the bench, auto-fill, the fairness counts and
   the printed card. New games default to the whole roster present.
+- **Batting order per game** — drag or nudge batters into any order for a
+  given game. Until you touch it, the order follows the roster.
 - **Per-inning lineup** — six innings by default, changeable per game.
 - **Field view** — drag a player onto a position, or tap a player then tap a
   position. Both work; tap is the reliable one on a phone.
@@ -73,6 +75,24 @@ Consequences worth knowing:
   six can't quietly rewrite week three.
 - Fewer than nine present is allowed. The unfilled positions print as `OUT`
   and the app says so rather than blocking the export.
+
+## How the batting order works
+
+A new game's order follows the roster. The moment you reorder a batter in that
+game, it sets `customOrder` and the game owns its order from then on:
+
+- Reordering the **roster** re-sorts games still following the roster, and
+  leaves hand-sorted games alone.
+- Marking a player absent closes the gap without disturbing the rest.
+- Re-adding a player puts them **at the bottom** of a hand-sorted order (a late
+  arrival bats last) but back in **roster position** for a game still following
+  the roster.
+- **Reset to roster order** hands the game back to the roster.
+- Duplicating a game carries its custom order across.
+
+Each row has both a drag handle and up/down arrows. Dragging matters here —
+moving someone from 15th to 3rd is one gesture instead of twelve taps — but the
+arrows stay for precision and keyboard access.
 
 ## Your data lives on your device
 

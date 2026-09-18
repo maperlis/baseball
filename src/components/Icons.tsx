@@ -88,3 +88,11 @@ export function IconDelete() {
     </svg>
   );
 }
+
+export function IconDrag() {
+  return (
+    <svg {...small} strokeWidth={2.2}>
+      <path d="M4 9h16M4 15h16" />
+    </svg>
+  );
+}

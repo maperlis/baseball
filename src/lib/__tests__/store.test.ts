@@ -257,3 +257,123 @@ describe('attendance', () => {
     expect(fieldedIds(game, 0)).toEqual([]);
   });
 });
+
+describe('batting order', () => {
+  beforeEach(reset);
+
+  it('starts in roster order and is not marked custom', () => {
+    const gameId = seed(12);
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(ids);
+    expect(game.customOrder).toBeFalsy();
+  });
+
+  it('moves a batter and marks the game custom', () => {
+    const gameId = seed(12);
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    // Move the 6th batter up to leadoff.
+    useAppStore.getState().moveBatter(gameId, 5, 0);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.customOrder).toBe(true);
+    expect(game.battingOrder[0]).toBe(ids[5]);
+    expect(game.battingOrder).toHaveLength(12);
+    expect(new Set(game.battingOrder).size).toBe(12);
+  });
+
+  it('keeps a custom order when the roster is reordered', () => {
+    const gameId = seed(12);
+    useAppStore.getState().moveBatter(gameId, 5, 0);
+    const before = [
+      ...useAppStore.getState().games.find((g) => g.id === gameId)!.battingOrder,
+    ];
+
+    useAppStore.getState().movePlayer(0, 11);
+
+    const after = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(after.battingOrder).toEqual(before);
+  });
+
+  it('still follows the roster for a game left in roster order', () => {
+    const gameId = seed(12);
+    useAppStore.getState().movePlayer(0, 11);
+
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(ids);
+  });
+
+  it('keeps a custom order when a player is marked absent', () => {
+    const gameId = seed(12);
+    useAppStore.getState().moveBatter(gameId, 5, 0);
+    const order = [
+      ...useAppStore.getState().games.find((g) => g.id === gameId)!.battingOrder,
+    ];
+    const absent = order[3];
+    useAppStore.getState().togglePlayerAttendance(gameId, absent);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(order.filter((id) => id !== absent));
+  });
+
+  it('puts a late arrival at the bottom of a custom order', () => {
+    const gameId = seed(12);
+    useAppStore.getState().moveBatter(gameId, 5, 0);
+    const order = [
+      ...useAppStore.getState().games.find((g) => g.id === gameId)!.battingOrder,
+    ];
+    const late = order[2];
+    useAppStore.getState().togglePlayerAttendance(gameId, late); // out
+    useAppStore.getState().togglePlayerAttendance(gameId, late); // back in
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder.at(-1)).toBe(late);
+    expect(game.battingOrder).toHaveLength(12);
+  });
+
+  it('resets back to roster order on request', () => {
+    const gameId = seed(12);
+    useAppStore.getState().moveBatter(gameId, 8, 0);
+    useAppStore.getState().resetBattingOrder(gameId);
+
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(ids);
+    expect(game.customOrder).toBe(false);
+  });
+
+  it('gives each game its own order', () => {
+    const a = seed(12);
+    const b = useAppStore.getState().createGame('Second', '2026-09-24');
+    useAppStore.getState().moveBatter(a, 7, 0);
+
+    const games = useAppStore.getState().games;
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    expect(games.find((g) => g.id === a)!.battingOrder[0]).toBe(ids[7]);
+    expect(games.find((g) => g.id === b)!.battingOrder).toEqual(ids);
+  });
+
+  it('ignores an out-of-range move', () => {
+    const gameId = seed(12);
+    const before = [
+      ...useAppStore.getState().games.find((g) => g.id === gameId)!.battingOrder,
+    ];
+    useAppStore.getState().moveBatter(gameId, 0, 99);
+    useAppStore.getState().moveBatter(gameId, -1, 0);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(before);
+  });
+
+  it('carries the custom order into a duplicated game', () => {
+    const gameId = seed(12);
+    useAppStore.getState().moveBatter(gameId, 6, 0);
+    const copyId = useAppStore.getState().duplicateGame(gameId)!;
+
+    const src = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    const copy = useAppStore.getState().games.find((g) => g.id === copyId)!;
+    expect(copy.battingOrder).toEqual(src.battingOrder);
+    expect(copy.customOrder).toBe(true);
+  });
+});

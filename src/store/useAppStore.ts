@@ -92,6 +92,9 @@ export interface AppState {
   removePlayer: (id: string) => void;
   movePlayer: (from: number, to: number) => void;
 
+  moveBatter: (gameId: string, from: number, to: number) => void;
+  resetBattingOrder: (gameId: string) => void;
+
   setAttendance: (gameId: string, playerIds: string[]) => void;
   togglePlayerAttendance: (gameId: string, playerId: string) => void;
   setAllAttending: (gameId: string, attending: boolean) => void;
@@ -180,28 +183,72 @@ export const useAppStore = create<AppState>()(
         const order = players.map((p) => p.id);
         set({
           players,
-          // Batting order follows roster order, but only among the players who
-          // are actually at each game — reordering the roster must not drag
-          // absent kids back into a lineup.
+          // Batting order follows roster order, but only among the players at
+          // each game, and never for a game the coach has hand-sorted — that
+          // order is theirs, and a roster tweak must not overwrite it.
           games: get().games.map((g) => {
+            if (g.customOrder) return g;
             const here = new Set(g.battingOrder);
             return { ...g, battingOrder: order.filter((id) => here.has(id)) };
           }),
         });
       },
 
+      /** Reorder one game's batting order. This is what makes it that game's own. */
+      moveBatter: (gameId, from, to) =>
+        set({
+          games: withGame(get().games, gameId, (g) => {
+            const order = [...g.battingOrder];
+            if (from < 0 || from >= order.length || to < 0 || to >= order.length) {
+              return g;
+            }
+            const [moved] = order.splice(from, 1);
+            order.splice(to, 0, moved);
+            return { ...g, battingOrder: order, customOrder: true };
+          }),
+        }),
+
+      /** Hand this game's order back to the roster. */
+      resetBattingOrder: (gameId) =>
+        set({
+          games: withGame(get().games, gameId, (g) => {
+            const here = new Set(g.battingOrder);
+            return {
+              ...g,
+              battingOrder: get()
+                .players.map((p) => p.id)
+                .filter((id) => here.has(id)),
+              customOrder: false,
+            };
+          }),
+        }),
+
       /**
-       * Attendance is the batting order. Setting it re-sorts into roster order
-       * so the card reads top-to-bottom the way the coach arranged the roster,
-       * and drops any assignment belonging to a player who is no longer here.
+       * Attendance is the batting order. Dropping a player also drops any
+       * assignment of theirs.
+       *
+       * On a game the coach has hand-sorted, the surviving players keep their
+       * places and anyone re-added lands at the bottom — a late arrival takes
+       * the last slot rather than silently reshuffling the order. Otherwise the
+       * order simply tracks the roster.
        */
       setAttendance: (gameId, playerIds) =>
         set({
           games: withGame(get().games, gameId, (g) => {
             const wanted = new Set(playerIds);
-            const order = get()
+            const rosterOrder = get()
               .players.map((p) => p.id)
               .filter((id) => wanted.has(id));
+
+            let order: string[];
+            if (g.customOrder) {
+              const kept = g.battingOrder.filter((id) => wanted.has(id));
+              const keptSet = new Set(kept);
+              order = [...kept, ...rosterOrder.filter((id) => !keptSet.has(id))];
+            } else {
+              order = rosterOrder;
+            }
+
             return {
               ...g,
               battingOrder: order,

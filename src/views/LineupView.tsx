@@ -20,6 +20,7 @@ import {
   positionOf,
 } from '../lib/fairness';
 import { AttendancePanel } from '../components/AttendancePanel';
+import { BattingOrderPanel } from '../components/BattingOrderPanel';
 // pdf.ts pulls in jsPDF (and its html2canvas dependency), roughly 250KB that
 // nothing needs until the coach actually taps Export. Loaded on demand so the
 // app shell stays light; the service worker still precaches the chunk, so
@@ -185,6 +186,7 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
       </div>
 
       <AttendancePanel game={game} allPlayers={players} />
+      <BattingOrderPanel game={game} attending={attending} />
 
       {shortRoster && (
         <p className="notice">
