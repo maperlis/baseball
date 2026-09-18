@@ -11,6 +11,9 @@ sit every inning, so the app tracks bench time and flags unfair patterns.
 
 - **Roster** — up to 20 players (name + uniform number). Roster order is the
   batting order.
+- **Attendance per game** — tick off who actually showed up. Absent players
+  drop out of the batting order, the bench, auto-fill, the fairness counts and
+  the printed card. New games default to the whole roster present.
 - **Per-inning lineup** — six innings by default, changeable per game.
 - **Field view** — drag a player onto a position, or tap a player then tap a
   position. Both work; tap is the reliable one on a phone.
@@ -52,6 +55,24 @@ Open the deployed URL on your phone, then:
 - **Android (Chrome):** menu → Install app / Add to Home screen.
 
 It then launches full-screen like a native app and works with no signal.
+
+## How attendance works
+
+A game's `battingOrder` **is** its attendance list: a player is at the game if
+and only if they appear in it. There is no separate "present" flag to keep in
+sync, so nothing can drift out of agreement.
+
+Consequences worth knowing:
+
+- Unchecking a player also clears any inning they were already assigned to.
+- Re-checking them puts them back in roster order, not at the bottom.
+- Reordering the roster re-sorts each game's batting order but never drags an
+  absent player back into a lineup.
+- Adding a player to the roster mid-season adds them to games that have **no
+  lineup yet**. A game you already built is left alone, so adding a kid in week
+  six can't quietly rewrite week three.
+- Fewer than nine present is allowed. The unfilled positions print as `OUT`
+  and the app says so rather than blocking the export.
 
 ## Your data lives on your device
 

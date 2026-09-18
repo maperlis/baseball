@@ -8,6 +8,26 @@ import {
   type Position,
 } from '../types';
 
+/**
+ * The players actually at this game, in batting order.
+ *
+ * `battingOrder` is the attendance list: a player is at the game if and only if
+ * they appear in it. Everything fairness-related — bench counts, warnings, the
+ * bench strip — must run over this rather than the full roster, or kids who
+ * stayed home get counted as sitting out.
+ */
+export function attendingPlayers(game: Game, allPlayers: Player[]): Player[] {
+  return game.battingOrder
+    .map((id) => allPlayers.find((p) => p.id === id))
+    .filter((p): p is Player => !!p);
+}
+
+/** Roster players who are not at this game. */
+export function absentPlayers(game: Game, allPlayers: Player[]): Player[] {
+  const here = new Set(game.battingOrder);
+  return allPlayers.filter((p) => !here.has(p.id));
+}
+
 /** Player ids in the field for an inning, in position order. */
 export function fieldedIds(game: Game, inning: number): string[] {
   const inn = game.assignments[inning] ?? {};

@@ -141,11 +141,119 @@ describe('games', () => {
     expect(positionOf(game, 1, p)).toBe('1B');
   });
 
-  it('adds a late-joining player to the bottom of existing batting orders', () => {
+  it('adds a late-joining player to the bottom of an unstarted batting order', () => {
     const gameId = seed(10);
     useAppStore.getState().addPlayer('Late Arrival', '99');
     const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
     const late = useAppStore.getState().players.at(-1)!;
     expect(game.battingOrder.at(-1)).toBe(late.id);
+  });
+});
+
+describe('attendance', () => {
+  beforeEach(reset);
+
+  it('starts a new game with the whole roster present', () => {
+    const gameId = seed(14);
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toHaveLength(14);
+  });
+
+  it('removes an absent player from the batting order', () => {
+    const gameId = seed(14);
+    const absent = useAppStore.getState().players[3].id;
+    useAppStore.getState().togglePlayerAttendance(gameId, absent);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toHaveLength(13);
+    expect(game.battingOrder).not.toContain(absent);
+  });
+
+  it('pulls an absent player out of innings they were already assigned to', () => {
+    const gameId = seed(14);
+    const absent = useAppStore.getState().players[0].id;
+    useAppStore.getState().assignPlayer(gameId, 0, 'SS', absent);
+    useAppStore.getState().assignPlayer(gameId, 1, 'P', absent);
+    useAppStore.getState().togglePlayerAttendance(gameId, absent);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(positionOf(game, 0, absent)).toBeNull();
+    expect(positionOf(game, 1, absent)).toBeNull();
+  });
+
+  it('restores a player in roster order, not at the bottom', () => {
+    const gameId = seed(14);
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    useAppStore.getState().togglePlayerAttendance(gameId, ids[2]);
+    useAppStore.getState().togglePlayerAttendance(gameId, ids[2]);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual(ids);
+  });
+
+  it('keeps attendance intact when the roster is reordered', () => {
+    const gameId = seed(14);
+    const ids = useAppStore.getState().players.map((p) => p.id);
+    const absent = ids[5];
+    useAppStore.getState().togglePlayerAttendance(gameId, absent);
+    // Reordering the roster must not drag the absent player back in.
+    useAppStore.getState().movePlayer(0, 9);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).not.toContain(absent);
+    expect(game.battingOrder).toHaveLength(13);
+  });
+
+  it('adds a new roster player only to games with no lineup yet', () => {
+    const untouched = seed(12);
+    const started = useAppStore.getState().createGame('Started', '2026-09-20');
+    const someone = useAppStore.getState().players[0].id;
+    useAppStore.getState().assignPlayer(started, 0, 'C', someone);
+
+    useAppStore.getState().addPlayer('Late Arrival', '99');
+    const late = useAppStore.getState().players.at(-1)!.id;
+
+    const games = useAppStore.getState().games;
+    expect(games.find((g) => g.id === untouched)!.battingOrder).toContain(late);
+    expect(games.find((g) => g.id === started)!.battingOrder).not.toContain(late);
+  });
+
+  it('autofills only among the players who are present', () => {
+    const gameId = seed(14);
+    const absent = useAppStore.getState().players.slice(0, 3).map((p) => p.id);
+    for (const id of absent) {
+      useAppStore.getState().togglePlayerAttendance(gameId, id);
+    }
+    useAppStore.getState().autoFill(gameId);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    for (let i = 0; i < game.innings; i++) {
+      const ids = fieldedIds(game, i);
+      expect(ids).toHaveLength(9);
+      for (const a of absent) expect(ids).not.toContain(a);
+    }
+  });
+
+  it('leaves positions empty when fewer than nine are present', () => {
+    const gameId = seed(12);
+    // Drop to 6 present.
+    for (const p of useAppStore.getState().players.slice(0, 6)) {
+      useAppStore.getState().togglePlayerAttendance(gameId, p.id);
+    }
+    useAppStore.getState().autoFill(gameId);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toHaveLength(6);
+    expect(fieldedIds(game, 0)).toHaveLength(6);
+  });
+
+  it('clearing attendance empties the lineup', () => {
+    const gameId = seed(12);
+    useAppStore.getState().autoFill(gameId);
+    useAppStore.getState().setAllAttending(gameId, false);
+
+    const game = useAppStore.getState().games.find((g) => g.id === gameId)!;
+    expect(game.battingOrder).toEqual([]);
+    expect(fieldedIds(game, 0)).toEqual([]);
   });
 });

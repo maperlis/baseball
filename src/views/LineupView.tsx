@@ -12,12 +12,14 @@ import {
 import { useAppStore } from '../store/useAppStore';
 import { FIELD_SLOTS, type Player, type Position } from '../types';
 import {
+  attendingPlayers,
   benchCounts,
   benchPlayers,
   fieldedIds,
   incompleteInnings,
   positionOf,
 } from '../lib/fairness';
+import { AttendancePanel } from '../components/AttendancePanel';
 // pdf.ts pulls in jsPDF (and its html2canvas dependency), roughly 250KB that
 // nothing needs until the coach actually taps Export. Loaded on demand so the
 // app shell stays light; the service worker still precaches the chunk, so
@@ -87,15 +89,18 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
 
   const safeInning = Math.min(inning, game.innings - 1);
   const current = game.assignments[safeInning] ?? {};
-  const bench = benchPlayers(game, players, safeInning);
-  const counts = benchCounts(game, players);
+  // Everything below counts only the players at THIS game. Using the full
+  // roster would score absent kids as sitting the bench all afternoon.
+  const attending = attendingPlayers(game, players);
+  const bench = benchPlayers(game, attending, safeInning);
+  const counts = benchCounts(game, attending);
   const complete = new Set(
     Array.from({ length: game.innings }, (_, i) => i).filter(
       (i) => fieldedIds(game, i).length >= FIELD_SLOTS,
     ),
   );
   const missing = incompleteInnings(game);
-  const shortRoster = players.length < FIELD_SLOTS;
+  const shortRoster = attending.length < FIELD_SLOTS;
 
   function handleDragStart(e: DragStartEvent) {
     const id = String(e.active.id);
@@ -179,10 +184,12 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
         </div>
       </div>
 
+      <AttendancePanel game={game} allPlayers={players} />
+
       {shortRoster && (
         <p className="notice">
-          Only {players.length} players on the roster — 9 are needed to fill a
-          field.
+          Only {attending.length} player{attending.length === 1 ? '' : 's'} at
+          this game — {FIELD_SLOTS} are needed to fill the field.
         </p>
       )}
 
@@ -234,7 +241,7 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
       ) : (
         <LineupGrid
           game={game}
-          players={players}
+          players={attending}
           currentInning={safeInning}
           onSelectInning={setInning}
           onSetCell={(i, playerId, value) => {
@@ -244,7 +251,7 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
         />
       )}
 
-      <FairnessPanel game={game} players={players} />
+      <FairnessPanel game={game} players={attending} />
 
       <div className="card">
         <div className="btn-row">

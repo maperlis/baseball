@@ -163,7 +163,10 @@ export function GamesView({ onOpenLineup }: { onOpenLineup: () => void }) {
                           )}
                         </span>
                         <span className="games__meta">
-                          {g.date} · {g.innings} innings
+                          {g.date} · {g.innings} innings ·{' '}
+                          {g.battingOrder.length === players.length
+                            ? `all ${players.length} playing`
+                            : `${g.battingOrder.length} of ${players.length} playing`}
                         </span>
                       </button>
                       <div className="games__actions">

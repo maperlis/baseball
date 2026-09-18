@@ -80,6 +80,18 @@ const ssFilled = await page
   .count();
 console.log(`tap-to-assign filled SS: ${ssFilled === 1}`);
 
+// --- Attendance -------------------------------------------------------------
+// Mark three kids absent; they should leave the batting order and the bench.
+await page.getByRole('button', { name: /Attendance/ }).click();
+await page.waitForTimeout(200);
+const absentNames = ['Gus M', 'Hank N', 'Ivan O'];
+for (const n of absentNames) {
+  await page.locator('.att__row', { hasText: n }).locator('input').uncheck();
+}
+await page.screenshot({ path: `${out}/3b-attendance.png` });
+const attLabel = await page.locator('.att__count').innerText();
+console.log(`attendance label: ${attLabel} (expected "17 of 20")`);
+
 // --- Autofill ---------------------------------------------------------------
 page.once('dialog', (d) => d.accept());
 await page.getByRole('button', { name: 'Auto-fill game' }).click();
@@ -88,6 +100,17 @@ await page.screenshot({ path: `${out}/4-field-filled.png` });
 
 const filledSlots = await page.locator('.slot--filled').count();
 console.log(`filled slots after autofill: ${filledSlots} (expected 9)`);
+
+// Absent players must appear nowhere on the field or the bench.
+const fieldText = await page.locator('.field').innerText();
+const benchText = await page.locator('.bench').innerText();
+const leaked = absentNames.filter(
+  (n) => fieldText.includes(n) || benchText.includes(n),
+);
+console.log(`absent players leaked into lineup: ${leaked.length ? leaked : 'none'}`);
+
+const benchCount = await page.locator('.bench .chip').count();
+console.log(`bench size: ${benchCount} (expected 8 = 17 present - 9 fielding)`);
 
 // --- Fairness panel ---------------------------------------------------------
 await page.getByRole('button', { name: /Fair play/ }).click();

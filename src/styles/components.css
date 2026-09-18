@@ -705,3 +705,112 @@
   border-color: var(--ww-green-light);
   color: var(--ww-green-dark);
 }
+
+/* --- Attendance ---------------------------------------------------------- */
+
+.att {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.att--short {
+  border-color: var(--warn);
+}
+
+.att__toggle {
+  width: 100%;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: 0;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.att__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.att__count {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ww-green-dark);
+  background: var(--ww-green-tint);
+  border-radius: var(--r-pill);
+  padding: 2px 9px;
+}
+
+.att--short .att__count {
+  color: #7a3a06;
+  background: var(--warn-tint);
+}
+
+.att__chev {
+  color: var(--text-muted);
+}
+
+.att__body {
+  padding: 12px 14px;
+  border-top: 1px solid var(--border);
+}
+
+.att__bulk {
+  margin-bottom: 10px;
+}
+
+.att__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 290px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.att__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+  padding: 4px 6px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+
+.att__row.is-here {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.att__check {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: var(--ww-green);
+}
+
+.att__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.att__num {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.att__note {
+  margin: 10px 0 0;
+}

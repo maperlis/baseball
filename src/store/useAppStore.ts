@@ -92,6 +92,10 @@ export interface AppState {
   removePlayer: (id: string) => void;
   movePlayer: (from: number, to: number) => void;
 
+  setAttendance: (gameId: string, playerIds: string[]) => void;
+  togglePlayerAttendance: (gameId: string, playerId: string) => void;
+  setAllAttending: (gameId: string, attending: boolean) => void;
+
   createGame: (name: string, date?: string) => string;
   duplicateGame: (id: string) => string | null;
   renameGame: (id: string, name: string, date: string) => void;
@@ -138,11 +142,14 @@ export const useAppStore = create<AppState>()(
         const player: Player = { id: newId(), name: trimmed, uniform: uniform.trim() };
         set({
           players: [...players, player],
-          // A new player joins the bottom of every existing batting order.
-          games: get().games.map((g) => ({
-            ...g,
-            battingOrder: [...g.battingOrder, player.id],
-          })),
+          // A late roster addition joins games that haven't been built yet.
+          // Games with a lineup already in them are left alone — adding a kid
+          // to the roster in week 6 shouldn't quietly rewrite week 3.
+          games: get().games.map((g) =>
+            Object.keys(g.assignments).length === 0
+              ? { ...g, battingOrder: [...g.battingOrder, player.id] }
+              : g,
+          ),
         });
         return { ok: true };
       },
@@ -173,10 +180,48 @@ export const useAppStore = create<AppState>()(
         const order = players.map((p) => p.id);
         set({
           players,
-          // Batting order follows the roster order — one list to reason about.
-          games: get().games.map((g) => ({ ...g, battingOrder: [...order] })),
+          // Batting order follows roster order, but only among the players who
+          // are actually at each game — reordering the roster must not drag
+          // absent kids back into a lineup.
+          games: get().games.map((g) => {
+            const here = new Set(g.battingOrder);
+            return { ...g, battingOrder: order.filter((id) => here.has(id)) };
+          }),
         });
       },
+
+      /**
+       * Attendance is the batting order. Setting it re-sorts into roster order
+       * so the card reads top-to-bottom the way the coach arranged the roster,
+       * and drops any assignment belonging to a player who is no longer here.
+       */
+      setAttendance: (gameId, playerIds) =>
+        set({
+          games: withGame(get().games, gameId, (g) => {
+            const wanted = new Set(playerIds);
+            const order = get()
+              .players.map((p) => p.id)
+              .filter((id) => wanted.has(id));
+            return {
+              ...g,
+              battingOrder: order,
+              assignments: pruneAssignments(g.assignments, g.innings, new Set(order)),
+            };
+          }),
+        }),
+
+      togglePlayerAttendance: (gameId, playerId) => {
+        const game = get().games.find((g) => g.id === gameId);
+        if (!game) return;
+        const here = game.battingOrder.includes(playerId);
+        const next = here
+          ? game.battingOrder.filter((id) => id !== playerId)
+          : [...game.battingOrder, playerId];
+        get().setAttendance(gameId, next);
+      },
+
+      setAllAttending: (gameId, attending) =>
+        get().setAttendance(gameId, attending ? get().players.map((p) => p.id) : []),
 
       createGame: (name, date) => {
         const game: Game = {
