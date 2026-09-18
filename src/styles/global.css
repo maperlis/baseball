@@ -139,8 +139,10 @@ h3 {
 }
 
 .tabbar__icon {
-  font-size: 18px;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
 }
 
 /* --- Generic building blocks -------------------------------------------- */
@@ -189,7 +191,7 @@ h3 {
 .btn--secondary {
   background: var(--surface);
   color: var(--ww-green-dark);
-  border-color: var(--n-300);
+  border-color: var(--border-control);
 }
 
 .btn--secondary:active {
@@ -199,7 +201,7 @@ h3 {
 .btn--danger {
   background: var(--surface);
   color: var(--danger);
-  border-color: var(--n-300);
+  border-color: var(--border-control);
 }
 
 .btn--sm {
@@ -218,7 +220,7 @@ h3 {
   min-height: var(--tap);
   width: 100%;
   padding: 0 12px;
-  border: 1px solid var(--n-300);
+  border: 1px solid var(--border-control);
   border-radius: var(--r-md);
   background: var(--surface);
 }

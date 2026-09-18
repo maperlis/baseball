@@ -101,3 +101,15 @@ Two deliberate choices worth knowing about:
 - **The PDF is intentionally unbranded.** It keeps the neutral charcoal header
   of the standard lineup card so position letters and the shaded `OUT` cells
   carry all the meaning on paper.
+
+## Verification helpers
+
+```bash
+npm test                 # unit tests
+npm run shots            # drives the built app in a phone-sized Chromium
+npm run pdf:sample out.pdf 20 6
+```
+
+`npm run shots` needs `npm run preview` running on port 4173 first. It exercises
+roster entry, the 20-player cap, tap-to-assign, autofill, and checks for
+horizontal overflow and console errors, writing screenshots to `./shots`.

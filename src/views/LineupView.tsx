@@ -273,7 +273,7 @@ export function LineupView({ onGoToGames }: { onGoToGames: () => void }) {
             disabled={safeInning === 0}
             onClick={() => copyPreviousInning(game.id, safeInning)}
           >
-            Copy inning {safeInning}
+            {safeInning === 0 ? 'Copy previous' : `Copy inning ${safeInning}`}
           </button>
           <button
             className="btn btn--secondary"

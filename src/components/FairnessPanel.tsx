@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Game, Player } from '../types';
-import { benchCounts, fairnessWarnings } from '../lib/fairness';
+import { FIELD_SLOTS } from '../types';
+import { backToBackIsForced, benchCounts, fairnessWarnings } from '../lib/fairness';
 
 interface Props {
   game: Game;
@@ -54,7 +55,19 @@ export function FairnessPanel({ game, players }: Props) {
 
           {blocking === 0 && players.length > 0 && (
             <p className="muted">
-              Bench time is spread evenly and nobody sits back to back.
+              {backToBackIsForced(players.length)
+                ? 'Bench time is spread as evenly as the roster allows.'
+                : 'Bench time is spread evenly and nobody sits back to back.'}
+            </p>
+          )}
+
+          {backToBackIsForced(players.length) && (
+            <p className="muted">
+              With {players.length} players and only {FIELD_SLOTS * 2} field
+              spots across any two innings, at least{' '}
+              {players.length - FIELD_SLOTS * 2} player
+              {players.length - FIELD_SLOTS * 2 === 1 ? '' : 's'} must sit two
+              in a row. Back-to-back innings aren't flagged at this roster size.
             </p>
           )}
 

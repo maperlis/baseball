@@ -1,17 +1,20 @@
 import { useDraggable, useDroppable } from '@dnd-kit/core';
 import { POSITIONS, POSITION_LABELS, type Player, type Position } from '../types';
 
-/** Slot centres in the 0–100 viewBox. Tuned to read as a real field on a phone. */
+/**
+ * Slot centres in the 0–100 viewBox, laid out against the field below:
+ * home plate at (50,88), the bases on a diamond out to second at (50,44).
+ */
 const SLOT_XY: Record<Position, { x: number; y: number }> = {
-  CF: { x: 50, y: 20 },
-  LF: { x: 19, y: 30 },
-  RF: { x: 81, y: 30 },
-  SS: { x: 36, y: 46 },
-  '2B': { x: 64, y: 46 },
-  '3B': { x: 22, y: 62 },
-  '1B': { x: 78, y: 62 },
-  P: { x: 50, y: 58 },
-  C: { x: 50, y: 84 },
+  CF: { x: 50, y: 25 },
+  LF: { x: 20, y: 34 },
+  RF: { x: 80, y: 34 },
+  SS: { x: 35, y: 52 },
+  '2B': { x: 65, y: 52 },
+  '3B': { x: 24, y: 67 },
+  '1B': { x: 76, y: 67 },
+  P: { x: 50, y: 68 },
+  C: { x: 50, y: 90 },
 };
 
 interface SlotProps {
@@ -98,35 +101,47 @@ export function FieldDiagram({
   return (
     <div className="field">
       <svg className="field__bg" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-        {/* Outfield grass */}
-        <path d="M2 74 A 62 62 0 0 1 98 74 L98 98 L2 98 Z" fill="var(--ww-green-light)" opacity="0.28" />
-        {/* Infield dirt */}
-        <path d="M50 92 L18 60 L50 28 L82 60 Z" fill="#C9A227" opacity="0.30" />
-        {/* Infield grass */}
-        <path d="M50 84 L26 60 L50 36 L74 60 Z" fill="var(--ww-green-light)" opacity="0.40" />
-        {/* Baselines */}
+        {/* Fair territory: a wedge from home plate out to the fence arc. */}
         <path
-          d="M50 92 L18 60 M50 92 L82 60"
-          stroke="var(--ww-white)"
-          strokeWidth="0.7"
-          fill="none"
-          opacity="0.85"
+          d="M50 88 L6 44 A 49 49 0 0 1 94 44 Z"
+          fill="var(--ww-green-light)"
+          opacity="0.30"
         />
+        {/* Infield dirt, with the usual arc behind second. */}
+        <path d="M50 95 L79 66 L50 37 L21 66 Z" fill="#C9A227" opacity="0.32" />
+        {/* Infield grass inside the base paths. */}
+        <path d="M50 82 L66 66 L50 50 L34 66 Z" fill="var(--ww-green-light)" opacity="0.45" />
+        {/* Base paths. */}
         <path
-          d="M50 92 L18 60 L50 28 L82 60 Z"
+          d="M50 88 L72 66 L50 44 L28 66 Z"
           stroke="var(--ww-white)"
-          strokeWidth="0.7"
+          strokeWidth="0.8"
           fill="none"
-          opacity="0.6"
+          opacity="0.9"
         />
-        {/* Outfield fence */}
+        {/* Foul lines, running past the bases to the fence. */}
         <path
-          d="M4 74 A 60 60 0 0 1 96 74"
+          d="M50 88 L8 46 M50 88 L92 46"
           stroke="var(--ww-white)"
-          strokeWidth="0.7"
+          strokeWidth="0.8"
           fill="none"
-          opacity="0.7"
+          opacity="0.75"
         />
+        {/* Outfield fence. */}
+        <path
+          d="M6 44 A 49 49 0 0 1 94 44"
+          stroke="var(--ww-white)"
+          strokeWidth="0.9"
+          fill="none"
+          opacity="0.8"
+        />
+        {/* Bases and the pitcher's plate. */}
+        <g fill="var(--ww-white)" opacity="0.95">
+          <rect x="70.6" y="64.6" width="2.8" height="2.8" transform="rotate(45 72 66)" />
+          <rect x="48.6" y="42.6" width="2.8" height="2.8" transform="rotate(45 50 44)" />
+          <rect x="26.6" y="64.6" width="2.8" height="2.8" transform="rotate(45 28 66)" />
+          <circle cx="50" cy="68" r="2.4" opacity="0.6" />
+        </g>
       </svg>
 
       {POSITIONS.map((pos) => {

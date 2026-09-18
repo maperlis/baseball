@@ -40,7 +40,12 @@
   /* --- Surfaces / text -------------------------------------------------- */
   --bg: var(--n-50);
   --surface: var(--ww-white);
+  /* Decorative separator between cards and rows — not a control boundary, so
+     it is tuned for calm rather than contrast. */
   --border: var(--n-200);
+  /* Boundary of an actual control (inputs, secondary buttons, inning tabs).
+     WCAG 1.4.11 wants 3:1; this measures 3.74 on white and 3.51 on --bg. */
+  --border-control: #7f867f;
   --text: var(--n-900);
   --text-muted: var(--n-600);
 

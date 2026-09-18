@@ -4,13 +4,14 @@ import { RosterView } from './views/RosterView';
 import { LineupView } from './views/LineupView';
 import { GamesView } from './views/GamesView';
 import { useAppStore } from './store/useAppStore';
+import { IconGames, IconLineup, IconRoster } from './components/Icons';
 
 type Tab = 'lineup' | 'games' | 'roster';
 
-const TABS: { id: Tab; label: string; icon: string }[] = [
-  { id: 'lineup', label: 'Lineup', icon: '⚾' },
-  { id: 'games', label: 'Games', icon: '🗓' },
-  { id: 'roster', label: 'Roster', icon: '👥' },
+const TABS: { id: Tab; label: string; Icon: () => JSX.Element }[] = [
+  { id: 'lineup', label: 'Lineup', Icon: IconLineup },
+  { id: 'games', label: 'Games', Icon: IconGames },
+  { id: 'roster', label: 'Roster', Icon: IconRoster },
 ];
 
 export default function App() {
@@ -41,8 +42,8 @@ export default function App() {
             aria-current={tab === t.id ? 'page' : undefined}
             onClick={() => setTab(t.id)}
           >
-            <span className="tabbar__icon" aria-hidden="true">
-              {t.icon}
+            <span className="tabbar__icon">
+              <t.Icon />
             </span>
             {t.label}
           </button>

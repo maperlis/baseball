@@ -60,6 +60,31 @@ describe('fairnessWarnings', () => {
     expect(fairnessWarnings(game, players)).toEqual([]);
   });
 
+  it('does not flag back-to-back sits on a roster where they are unavoidable', () => {
+    // 20 players, 18 field slots across any two innings — at least 2 kids must
+    // sit both. Warning about that would cry wolf on every real lineup.
+    const players = makePlayers(20);
+    const game = makeGame(players, 6);
+    const filled = { ...game, assignments: suggestLineup(game, players) };
+
+    const backToBack = fairnessWarnings(filled, players).filter((w) =>
+      w.message.includes('back to back'),
+    );
+    expect(backToBack).toEqual([]);
+  });
+
+  it('still flags back-to-back sits when the roster leaves room to avoid them', () => {
+    const players = makePlayers(11);
+    const game = makeGame(players, 2);
+    game.assignments[0] = fillInning(1);
+    game.assignments[1] = fillInning(1);
+
+    const backToBack = fairnessWarnings(game, players).filter((w) =>
+      w.message.includes('back to back'),
+    );
+    expect(backToBack.length).toBeGreaterThan(0);
+  });
+
   it('flags a player who sits two innings running', () => {
     const players = makePlayers(11);
     const game = makeGame(players, 2);

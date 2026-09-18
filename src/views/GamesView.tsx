@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { storageIsPersistent, useAppStore } from '../store/useAppStore';
+import { IconCopy, IconDelete, IconEdit } from '../components/Icons';
 import { isGameComplete } from '../lib/fairness';
 import { todayISO } from '../lib/ids';
 import type { Game, Player } from '../types';
@@ -171,14 +172,14 @@ export function GamesView({ onOpenLineup }: { onOpenLineup: () => void }) {
                           aria-label={`Edit ${g.name}`}
                           onClick={() => setEditingId(g.id)}
                         >
-                          ✎
+                          <IconEdit />
                         </button>
                         <button
                           className="iconbtn"
                           aria-label={`Duplicate ${g.name}`}
                           onClick={() => duplicateGame(g.id)}
                         >
-                          ⧉
+                          <IconCopy />
                         </button>
                         <button
                           className="iconbtn iconbtn--danger"
@@ -187,7 +188,7 @@ export function GamesView({ onOpenLineup }: { onOpenLineup: () => void }) {
                             if (confirm(`Delete "${g.name}"?`)) deleteGame(g.id);
                           }}
                         >
-                          ✕
+                          <IconDelete />
                         </button>
                       </div>
                     </>

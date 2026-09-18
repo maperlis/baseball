@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { IconDelete, IconDown, IconEdit, IconUp } from '../components/Icons';
 import { MAX_PLAYERS } from '../types';
 
 export function RosterView() {
@@ -129,7 +130,7 @@ export function RosterView() {
                         disabled={i === 0}
                         onClick={() => movePlayer(i, i - 1)}
                       >
-                        ↑
+                        <IconUp />
                       </button>
                       <button
                         className="iconbtn"
@@ -137,14 +138,14 @@ export function RosterView() {
                         disabled={i === players.length - 1}
                         onClick={() => movePlayer(i, i + 1)}
                       >
-                        ↓
+                        <IconDown />
                       </button>
                       <button
                         className="iconbtn"
                         aria-label={`Edit ${p.name}`}
                         onClick={() => setEditingId(p.id)}
                       >
-                        ✎
+                        <IconEdit />
                       </button>
                       <button
                         className="iconbtn iconbtn--danger"
@@ -155,7 +156,7 @@ export function RosterView() {
                           }
                         }}
                       >
-                        ✕
+                        <IconDelete />
                       </button>
                     </div>
                   </>

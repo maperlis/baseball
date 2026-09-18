@@ -87,6 +87,16 @@ export function duplicateAssignments(game: Game): number[] {
   return out;
 }
 
+/**
+ * Across any two consecutive innings there are only 18 field slots, so on a
+ * roster larger than that at least `size - 18` players MUST sit both. Flagging
+ * that as unfair would be crying wolf on exactly the roster size this app was
+ * built for, so the warning is suppressed when it is structurally forced.
+ */
+export function backToBackIsForced(rosterSize: number): boolean {
+  return rosterSize > FIELD_SLOTS * 2;
+}
+
 export type Severity = 'warn' | 'info';
 
 export interface FairnessWarning {
@@ -113,19 +123,23 @@ export function fairnessWarnings(game: Game, players: Player[]): FairnessWarning
   const benchable = players.length > FIELD_SLOTS;
   const min = Math.min(...players.map((p) => counts[p.id]));
 
+  const forced = backToBackIsForced(players.length);
+
   for (const player of players) {
-    // Sat two innings running.
-    for (let i = 1; i < game.innings; i++) {
-      const prev = fieldedIds(game, i - 1);
-      const cur = fieldedIds(game, i);
-      if (prev.length === 0 || cur.length === 0) continue;
-      if (!prev.includes(player.id) && !cur.includes(player.id)) {
-        warnings.push({
-          playerId: player.id,
-          severity: 'warn',
-          message: `Sits out innings ${i} and ${i + 1} back to back`,
-        });
-        break;
+    // Sat two innings running — only worth raising when it was avoidable.
+    if (!forced) {
+      for (let i = 1; i < game.innings; i++) {
+        const prev = fieldedIds(game, i - 1);
+        const cur = fieldedIds(game, i);
+        if (prev.length === 0 || cur.length === 0) continue;
+        if (!prev.includes(player.id) && !cur.includes(player.id)) {
+          warnings.push({
+            playerId: player.id,
+            severity: 'warn',
+            message: `Sits out innings ${i} and ${i + 1} back to back`,
+          });
+          break;
+        }
       }
     }
 
