@@ -8,3 +8,5 @@ dist-ssr/
 *.pdf
 !docs/*.pdf
 shots/
+tsconfig.tsbuildinfo
+*.tsbuildinfo
