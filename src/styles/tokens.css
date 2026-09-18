@@ -1,0 +1,63 @@
+/*
+ * Westwood design tokens.
+ *
+ * The three brand values are sampled directly from the team logo
+ * (a block "W", green on black with a white outline):
+ *   #2C653A green, #000000 black, #FFFFFF white.
+ *
+ * Contrast ratios below are measured, not estimated. Anything used for text
+ * clears WCAG AA (4.5:1); values that don't are marked decorative and must
+ * never carry small type.
+ */
+:root {
+  /* --- Brand ------------------------------------------------------------ */
+  --ww-green: #2c653a; /* 6.93:1 on white — safe for text and buttons */
+  --ww-green-dark: #1e4728; /* 10.57:1 on white — headings, pressed states */
+  --ww-green-light: #3d8a4f; /* 4.25:1 — DECORATIVE ONLY, no small text */
+  --ww-green-tint: #e8f1ea; /* selected rows, active inning, drop targets */
+  --ww-black: #0b0b0b; /* header bar — the logo's native ground */
+  --ww-white: #ffffff;
+
+  /* --- Neutrals --------------------------------------------------------- */
+  --n-50: #f7f8f7;
+  --n-100: #eef0ee;
+  --n-200: #e5e7e5;
+  --n-300: #d2d6d3;
+  --n-400: #9ba29c;
+  --n-500: #6f766f;
+  --n-600: #5a605b;
+  --n-700: #444945;
+  --n-900: #2a2e2b;
+
+  /* --- Semantic --------------------------------------------------------- */
+  /* Matches the OUT fill in the exported PDF, so screen and paper agree. */
+  --bench: #c6c6c6;
+  --bench-soft: #ececec;
+  --warn: #b45309; /* fairness alerts — amber, reads clearly against green */
+  --warn-tint: #fdf4e7;
+  --danger: #b3261e;
+
+  /* --- Surfaces / text -------------------------------------------------- */
+  --bg: var(--n-50);
+  --surface: var(--ww-white);
+  --border: var(--n-200);
+  --text: var(--n-900);
+  --text-muted: var(--n-600);
+
+  /* --- Shape & depth ---------------------------------------------------- */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(11, 11, 11, 0.08);
+  --shadow-2: 0 4px 12px rgba(11, 11, 11, 0.12);
+
+  /* --- Layout ----------------------------------------------------------- */
+  --header-h: 56px;
+  --tabbar-h: 60px;
+  --gutter: 16px;
+
+  /* Minimum comfortable touch target. Every interactive element in this app
+     is used one-handed, outdoors, often in a hurry. */
+  --tap: 44px;
+}

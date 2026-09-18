@@ -1,0 +1,699 @@
+/* --- Roster -------------------------------------------------------------- */
+
+.roster__add {
+  display: grid;
+  grid-template-columns: 1fr 64px auto;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.roster__uniform {
+  text-align: center;
+  padding: 0 4px;
+}
+
+.roster {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.roster__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.roster__row:last-child {
+  border-bottom: 0;
+}
+
+.roster__order {
+  width: 24px;
+  flex-shrink: 0;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--ww-green-dark);
+}
+
+.roster__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.roster__num {
+  width: 34px;
+  text-align: center;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.roster__actions,
+.games__actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.iconbtn {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.iconbtn:active {
+  background: var(--n-100);
+}
+
+.iconbtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.iconbtn--danger {
+  color: var(--danger);
+}
+
+.linkbtn {
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ww-green-dark);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+/* --- Lineup top bar ------------------------------------------------------ */
+
+.lineup__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.lineup__game {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 8px 12px;
+  min-height: var(--tap);
+}
+
+.lineup__gamename {
+  display: block;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lineup__gamedate {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.seg {
+  display: flex;
+  background: var(--n-100);
+  border-radius: var(--r-md);
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.seg__btn {
+  border: 0;
+  background: none;
+  padding: 8px 12px;
+  border-radius: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-height: 38px;
+}
+
+.seg__btn.is-on {
+  background: var(--surface);
+  color: var(--ww-green-dark);
+  box-shadow: var(--shadow-1);
+}
+
+/* --- Inning tabs --------------------------------------------------------- */
+
+.innings {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.inning {
+  flex: 1 0 auto;
+  min-width: 52px;
+  min-height: var(--tap);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  background: var(--surface);
+  border: 1px solid var(--n-300);
+  border-radius: var(--r-md);
+  color: var(--text-muted);
+  padding: 4px;
+}
+
+.inning__n {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.inning__state {
+  font-size: 11px;
+  line-height: 1;
+  height: 12px;
+}
+
+.inning--done {
+  border-color: var(--ww-green-light);
+  background: var(--ww-green-tint);
+  color: var(--ww-green-dark);
+}
+
+.inning--active {
+  background: var(--ww-green);
+  border-color: var(--ww-green-dark);
+  color: var(--ww-white);
+}
+
+/* --- Field --------------------------------------------------------------- */
+
+.field {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-height: 58vh;
+  margin: 0 auto 12px;
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  touch-action: manipulation;
+}
+
+.field__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 21%;
+  min-height: 46px;
+  padding: 4px 2px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1px;
+  border-radius: var(--r-md);
+  border: 1.5px solid var(--n-300);
+  background: rgba(255, 255, 255, 0.94);
+  text-align: center;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.slot__pos {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--ww-green-dark);
+  line-height: 1;
+}
+
+.slot__name {
+  font-size: 11px;
+  line-height: 1.15;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 0 2px;
+}
+
+.slot__dash {
+  color: var(--n-400);
+}
+
+.slot--filled {
+  border-color: var(--ww-green);
+  background: var(--ww-white);
+  box-shadow: var(--shadow-1);
+}
+
+.slot--empty {
+  border-style: dashed;
+}
+
+/* A player is waiting to be placed — show every slot as a live target. */
+.slot--target {
+  border-color: var(--ww-green-light);
+  box-shadow: 0 0 0 3px rgba(61, 138, 79, 0.18);
+}
+
+.slot--over {
+  border-color: var(--ww-green-dark);
+  background: var(--ww-green-tint);
+  box-shadow: 0 0 0 4px rgba(44, 101, 58, 0.25);
+}
+
+.slot--selected {
+  border-color: var(--warn);
+  box-shadow: 0 0 0 3px rgba(180, 83, 9, 0.25);
+}
+
+.slot--dragging {
+  opacity: 0.4;
+}
+
+/* --- Bench --------------------------------------------------------------- */
+
+.bench {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 10px 12px 12px;
+  margin-bottom: 12px;
+}
+
+.bench--over {
+  border-color: var(--ww-green);
+  background: var(--ww-green-tint);
+}
+
+.bench__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.bench__hint {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.bench__empty {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 6px 0;
+}
+
+.bench__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 38px;
+  padding: 0 8px 0 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--n-300);
+  background: var(--surface);
+  font-size: 14px;
+  touch-action: none;
+}
+
+.chip__name {
+  font-weight: 600;
+}
+
+.chip__num {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.chip__bench {
+  min-width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: var(--n-100);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.chip__bench--on {
+  background: var(--bench);
+  color: var(--n-900);
+}
+
+.chip--selected {
+  border-color: var(--warn);
+  background: var(--warn-tint);
+  box-shadow: 0 0 0 2px rgba(180, 83, 9, 0.2);
+}
+
+.chip--dragging {
+  opacity: 0.4;
+}
+
+.chip--overlay {
+  background: var(--ww-green);
+  color: var(--ww-white);
+  border-color: var(--ww-green-dark);
+  box-shadow: var(--shadow-2);
+  font-weight: 700;
+  padding: 0 14px;
+}
+
+/* --- Grid ---------------------------------------------------------------- */
+
+.gridwrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow-x: auto;
+  margin-bottom: 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.grid {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+}
+
+.grid__th {
+  background: var(--ww-black);
+  color: var(--ww-white);
+  font-weight: 700;
+  padding: 8px 4px;
+  text-align: center;
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+}
+
+.grid__th--inn {
+  cursor: pointer;
+  min-width: 46px;
+}
+
+.grid__th--inn.is-current {
+  background: var(--ww-green);
+}
+
+.grid__th--name {
+  text-align: left;
+  padding-left: 8px;
+}
+
+.grid__td {
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+  text-align: center;
+}
+
+.grid tbody tr:nth-child(even) {
+  background: var(--n-50);
+}
+
+.grid__td--order {
+  width: 28px;
+  font-weight: 700;
+  color: var(--ww-green-dark);
+  font-variant-numeric: tabular-nums;
+}
+
+.grid__td--name {
+  text-align: left;
+  padding: 6px 8px;
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.grid__td--num {
+  width: 34px;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.grid__td--cell.is-current {
+  box-shadow: inset 0 0 0 2px var(--ww-green-tint);
+}
+
+/* Bench cells are shaded the same grey as the printed card. */
+.grid__td--cell.is-out {
+  background: var(--bench-soft);
+}
+
+.grid__td--cell.is-out .grid__select {
+  color: var(--n-600);
+}
+
+.grid__select {
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  text-align: center;
+  text-align-last: center;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 0 2px;
+  appearance: none;
+}
+
+/* --- Fairness panel ------------------------------------------------------ */
+
+.fair {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  margin-bottom: 12px;
+  overflow: hidden;
+}
+
+.fair--warn {
+  border-color: var(--warn);
+}
+
+.fair__toggle {
+  width: 100%;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: none;
+  border: 0;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.fair__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fair__badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-pill);
+  background: var(--warn);
+  color: var(--ww-white);
+  font-size: 12px;
+}
+
+.fair__ok {
+  color: var(--ww-green);
+}
+
+.fair__chev {
+  color: var(--text-muted);
+}
+
+.fair__body {
+  padding: 0 14px 12px;
+  border-top: 1px solid var(--border);
+}
+
+.fair__list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+}
+
+.fair__row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.fair__row:last-child {
+  border-bottom: 0;
+}
+
+.fair__name {
+  font-weight: 600;
+}
+
+.fair__count {
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fair__msgs {
+  grid-column: 1 / -1;
+  margin: 2px 0 0;
+  padding-left: 16px;
+  color: var(--warn);
+  font-size: 13px;
+}
+
+/* --- Games --------------------------------------------------------------- */
+
+.games__new {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 420px) {
+  .games__new {
+    grid-template-columns: 1fr 150px auto;
+  }
+}
+
+.games {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.games__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.games__row:last-child {
+  border-bottom: 0;
+}
+
+.games__row.is-active {
+  background: var(--ww-green-tint);
+  border-radius: var(--r-sm);
+}
+
+.games__open {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 8px;
+  min-height: var(--tap);
+}
+
+.games__name {
+  display: block;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.games__done {
+  color: var(--ww-green);
+  margin-left: 6px;
+}
+
+.games__meta {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.games__edit {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 0;
+}
+
+.games__innings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.games__innings .input {
+  width: 80px;
+}
+
+/* --- Notices ------------------------------------------------------------- */
+
+.notice {
+  background: var(--warn-tint);
+  border: 1px solid rgba(180, 83, 9, 0.3);
+  color: #7a3a06;
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.notice--action {
+  background: var(--ww-green-tint);
+  border-color: var(--ww-green-light);
+  color: var(--ww-green-dark);
+}
