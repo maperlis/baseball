@@ -11,6 +11,9 @@ export function AppHeader({ teamName, subtitle }: Props) {
         <div className="header__team">{teamName || 'Westwood'}</div>
         {subtitle && <div className="header__sub">{subtitle}</div>}
       </div>
+      <a className="header__play" href="/game">
+        Play ⚾
+      </a>
     </header>
   );
 }

@@ -104,6 +104,20 @@ h3 {
   text-overflow: ellipsis;
 }
 
+/* Link to the retro game; pushed to the right edge of the header. */
+.header__play {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: 1px solid var(--n-600);
+  border-radius: 999px;
+  color: var(--ww-white);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
 /* --- Bottom tab bar ----------------------------------------------------- */
 
 .tabbar {

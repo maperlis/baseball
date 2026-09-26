@@ -28,6 +28,33 @@ sit every inning, so the app tracks bench time and flags unfair patterns.
 - **Works offline** — installable to your home screen; no signal needed at the
   field.
 
+## Retro Baseball (`/game`)
+
+An 8-bit baseball game at **`/game`** (or tap **Play ⚾** in the header). Pick
+any two current MLB clubs; you bat and pitch, and fielding and baserunning are
+simulated.
+
+- **Real, current rosters.** Active rosters and this season's stats come from
+  MLB's public Stats API through `api/mlb.ts`, which Vercel caches for 6 hours.
+  Before April, and early in the season, last year's stats are folded in.
+- **Stats drive ratings.** Hitters get contact (AVG, K%), power (ISO), eye (BB%)
+  and speed (SB, triples). Pitchers get velocity and stuff (K/9, hits, ERA),
+  control (BB/9) and stamina (innings per start). Small samples are pulled
+  toward average, so a hot April week doesn't make an MVP.
+- **Three levels:**
+  - **Rookie:** slow pitches, and the game aims for you, so you only time the swing.
+  - **Pro:** real speed, with aim assist.
+  - **All-Star:** fast pitches, and you aim yourself.
+- **Controls:** on-screen D-pad and A/B on a phone (portrait or landscape).
+  On a keyboard, arrows plus `Z`/`Space` (swing, throw), `X` (change pitch),
+  `Enter` (pause) and `M` (sound).
+- **Offline:** the last rosters you loaded are saved on the device. On a first
+  launch with no signal, two made-up demo teams are used.
+
+The game loads as its own chunk, so the lineup app doesn't download it.
+Real team and player names are fine for private use. Publishing it publicly
+or commercially would need MLB/MLBPA licensing.
+
 ## Running it locally
 
 ```bash
@@ -118,6 +145,11 @@ src/
   components/              field diagram, grid, bench, tabs, fairness panel
   views/                   Lineup, Games, Roster
   styles/tokens.css        design tokens — change colours here, only here
+  game/                    Retro Baseball
+    data/                  MLB feed parsing, stats -> ratings, lineups
+    sim/                   pure game rules: pitch, swing, outcome, state
+    render/ scenes/        8-bit canvas drawing and screens
+api/mlb.ts                 Vercel edge function proxying the MLB Stats API
 scripts/pdf-sample.ts      renders a sample PDF for visual checks
 ```
 
@@ -151,6 +183,8 @@ npm run shots            # drives the built app in a phone-sized Chromium
 npm run pdf:sample out.pdf 20 6
 ```
 
-`npm run shots` needs `npm run preview` running on port 4173 first. It exercises
+`npm run shots` needs `npm run preview` running on port 4173 first.
+`npm run shots:game` plays the game against a stubbed MLB feed on desktop,
+phone, and phone-landscape sizes. It exercises
 roster entry, the 20-player cap, tap-to-assign, autofill, and checks for
 horizontal overflow and console errors, writing screenshots to `./shots`.
